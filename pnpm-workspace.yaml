@@ -1,0 +1,5 @@
+minimumReleaseAgeExclude:
+  - '@gloamtrade/sdk@0.8.1'
+allowBuilds:
+  esbuild: true
+  blake-hash: true

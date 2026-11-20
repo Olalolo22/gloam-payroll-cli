@@ -1,0 +1,22 @@
+{
+  "name": "gloam-payroll-cli",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Headless private CSV payroll runner and gloamroll1 total-proof CLI built on @gloamtrade/sdk.",
+  "scripts": {
+    "cli": "tsx src/cli.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test test/payroll.test.ts"
+  },
+  "dependencies": {
+    "@gloamtrade/sdk": "^0.8.1",
+    "snarkjs": "^0.7.5",
+    "viem": "^2.21.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}
