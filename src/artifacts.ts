@@ -7,47 +7,24 @@ import {
   ceremonyForChainId,
   circuitArtifactFiles,
   type CeremonyKind,
-  type PoolCircuit,
+  type GloamCircuit,
 } from "@gloamtrade/sdk";
 
 /**
- * `payroll_total` circuit hashes mirrored from `app/src/lib/proofs/artifacts.ts` in
- * `gloamtrade/gloam`. `@gloamtrade/sdk@0.8.1` exports `buildPayrollWitness`,
- * `payrollParts`, `payrollPaymentsHash`, and `verifyGroth16`, but its `CIRCUIT_SHA256`
- * table currently only pins `shield`, `transfer`, `unshield`, and `receipt`.
+ * `payroll_total` verification key hashes for optional local `--snark` verification.
+ * Proving artifacts (`.wasm` and dev/final `.zkey`) are resolved directly from
+ * `@gloamtrade/sdk` (`circuitArtifactFiles` / `CIRCUIT_SHA256`, added in `0.8.2`).
  */
-export const PAYROLL_TOTAL_ARTIFACTS: {
-  wasm: { path: string; sha256: string };
-  zkey: Record<CeremonyKind, { path: string; sha256: string }>;
-  vkey: Record<CeremonyKind, { path: string; sha256: string }>;
-} = {
-  wasm: {
-    path: "payroll_total.wasm",
-    sha256: "0acee042752e3ae22d0e30f64084ba7638467a66bcee7d55d934041512db69f3",
+export const PAYROLL_TOTAL_VKEYS: Record<CeremonyKind, { path: string; sha256: string }> = {
+  dev: {
+    path: "payroll_total_vkey.json",
+    sha256: "52be3bb32335f3ec838cf02aa6eab2b30134d6df3f32ffbc5f39a49862b8d44a",
   },
-  zkey: {
-    dev: {
-      path: "payroll_total_final.zkey",
-      sha256: "f8cb1c8ea5ada2e09a07c47ab3d994860e1a71e021ea89ca96cf1c90c4c1c272",
-    },
-    production: {
-      path: "final/payroll_total_final.zkey",
-      sha256: "29f72fea1a93806f9ffa0c7a563645f754d6cf88b028d6337a4aa4c0a000644c",
-    },
-  },
-  vkey: {
-    dev: {
-      path: "payroll_total_vkey.json",
-      sha256: "52be3bb32335f3ec838cf02aa6eab2b30134d6df3f32ffbc5f39a49862b8d44a",
-    },
-    production: {
-      path: "final/payroll_total_vkey.json",
-      sha256: "83f3d0998ac773db5556491908480fbdb3decaefd0fd8d908973d31fe5fc7bc8",
-    },
+  production: {
+    path: "final/payroll_total_vkey.json",
+    sha256: "83f3d0998ac773db5556491908480fbdb3decaefd0fd8d908973d31fe5fc7bc8",
   },
 };
-
-export type CliCircuit = PoolCircuit | "payroll_total";
 
 export interface ResolvedCircuitPaths {
   wasm: string;
@@ -99,11 +76,11 @@ async function ensureVerifiedFile(
 }
 
 /**
- * Resolve and SHA-256-verify local circuit files for `shield`, `transfer`, `unshield`,
- * or `payroll_total` matching the target chain's ceremony (`dev` vs `production`).
+ * Resolve and SHA-256-verify local circuit files via `@gloamtrade/sdk`'s pinned
+ * `circuitArtifactFiles` matching the target chain's ceremony (`dev` vs `production`).
  */
 export async function resolveCircuitArtifacts(
-  circuit: CliCircuit,
+  circuit: GloamCircuit,
   chainId: number,
   opts?: { cacheDir?: string; baseUrl?: string; includeVkey?: boolean }
 ): Promise<ResolvedCircuitPaths> {
@@ -111,27 +88,19 @@ export async function resolveCircuitArtifacts(
   const cacheDir = opts?.cacheDir ?? defaultCircuitsCacheDir();
   const baseUrl = opts?.baseUrl ?? GLOAM_ARTIFACTS_URL;
 
-  if (circuit === "payroll_total") {
-    const wasmSpec = PAYROLL_TOTAL_ARTIFACTS.wasm;
-    const zkeySpec = PAYROLL_TOTAL_ARTIFACTS.zkey[ceremony];
-    const [wasm, zkey] = await Promise.all([
-      ensureVerifiedFile(cacheDir, wasmSpec.path, wasmSpec.sha256, baseUrl),
-      ensureVerifiedFile(cacheDir, zkeySpec.path, zkeySpec.sha256, baseUrl),
-    ]);
-    let vkey: string | undefined;
-    if (opts?.includeVkey) {
-      const vkeySpec = PAYROLL_TOTAL_ARTIFACTS.vkey[ceremony];
-      vkey = await ensureVerifiedFile(cacheDir, vkeySpec.path, vkeySpec.sha256, baseUrl);
-    }
-    return { wasm, zkey, vkey, ceremony };
-  }
-
   const spec = circuitArtifactFiles(circuit, ceremony);
   const [wasm, zkey] = await Promise.all([
     ensureVerifiedFile(cacheDir, spec.wasm, spec.sha256.wasm, baseUrl),
     ensureVerifiedFile(cacheDir, spec.zkey, spec.sha256.zkey, baseUrl),
   ]);
-  return { wasm, zkey, ceremony };
+
+  let vkey: string | undefined;
+  if (opts?.includeVkey && circuit === "payroll_total") {
+    const vkeySpec = PAYROLL_TOTAL_VKEYS[ceremony];
+    vkey = await ensureVerifiedFile(cacheDir, vkeySpec.path, vkeySpec.sha256, baseUrl);
+  }
+
+  return { wasm, zkey, vkey, ceremony };
 }
 
 /** Load and parse a SHA-256-verified `payroll_total` verification key JSON. */
@@ -142,7 +111,7 @@ export async function loadPayrollVkey(
   const ceremony = ceremonyForChainId(chainId);
   const cacheDir = opts?.cacheDir ?? defaultCircuitsCacheDir();
   const baseUrl = opts?.baseUrl ?? GLOAM_ARTIFACTS_URL;
-  const spec = PAYROLL_TOTAL_ARTIFACTS.vkey[ceremony];
+  const spec = PAYROLL_TOTAL_VKEYS[ceremony];
   const file = await ensureVerifiedFile(cacheDir, spec.path, spec.sha256, baseUrl);
   return JSON.parse(readFileSync(file, "utf8")) as unknown;
 }

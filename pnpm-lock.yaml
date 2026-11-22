@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@gloamtrade/sdk':
-        specifier: ^0.8.1
-        version: 0.8.1(snarkjs@0.7.6)(typescript@5.9.3)
+        specifier: ^0.8.2
+        version: 0.8.2(snarkjs@0.7.6)(typescript@5.9.3)
       snarkjs:
         specifier: ^0.7.5
         version: 0.7.6
@@ -279,8 +279,8 @@ packages:
   '@ethersproject/wordlists@5.8.0':
     resolution: {integrity: sha512-2df9bbXicZws2Sb5S6ET493uJ0Z84Fjr3pC4tu/qlnZERibZCeUVuqdtt+7Tv9xxhUxHoIekIA7avrKUWHrezg==}
 
-  '@gloamtrade/sdk@0.8.1':
-    resolution: {integrity: sha512-d3hBMNJUK4D5o9MeqikG9GxlxW9PBuusdKM43x5lLWFHNKSOHAAjcb9ab12dTEW56z/uIMX8wsq9T/tCAWPggg==}
+  '@gloamtrade/sdk@0.8.2':
+    resolution: {integrity: sha512-soX84FxmR7bNfKHXB4Ka7HkO3mM58Mf3AFnjrcsL1uSnjo6+Y8ngQQT8IfsHSC0zKZrSbxOILTJdmwc5qBHYRw==}
     peerDependencies:
       snarkjs: '*'
     peerDependenciesMeta:
@@ -942,7 +942,7 @@ snapshots:
       '@ethersproject/properties': 5.8.0
       '@ethersproject/strings': 5.8.0
 
-  '@gloamtrade/sdk@0.8.1(snarkjs@0.7.6)(typescript@5.9.3)':
+  '@gloamtrade/sdk@0.8.2(snarkjs@0.7.6)(typescript@5.9.3)':
     dependencies:
       circomlibjs: 0.1.7
       viem: 2.58.1(typescript@5.9.3)

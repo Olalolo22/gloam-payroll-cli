@@ -6,20 +6,17 @@ import {
   GloamRelayError,
   approvalSteps,
   artifactProver,
+  buildPrivateSendIntent,
   buildShieldBoundIntent,
-  buildTransferWitness,
   ceremonyForChainId,
   createTreeSync,
   encodeNotePackage,
   encodeShortClaim,
-  fieldToBytes32,
-  fieldToHex,
   getGloamNetwork,
   gloamLeafSeed,
   gloamNetworks,
   gloamReadTransport,
   isNoLimit,
-  networkName,
   payMemoBoardFor,
   payrollParts,
   randomNoteSeed,
@@ -27,12 +24,13 @@ import {
   relayMemo,
   sealToReceiveTag,
   shortClaimLink,
+  transferCallArgs,
   type GloamAsset,
-  type GloamIntent,
   type GloamNetwork,
   type GloamNetworkKey,
   type NoteExport,
   type PoseidonMerklePath,
+  type PrivateSendIntent,
   type Prover,
 } from "@gloamtrade/sdk";
 import {
@@ -203,7 +201,7 @@ export async function buildPaymentDelivery(args: {
 }
 
 export interface PreparedTransfer {
-  intent: GloamIntent<"private_send"> & { exec: NonNullable<GloamIntent<"private_send">["exec"]> };
+  intent: PrivateSendIntent;
   paymentNote: NoteExport;
   changeNote: NoteExport;
   paymentSeed?: Hex;
@@ -213,9 +211,8 @@ export interface PreparedTransfer {
 }
 
 /**
- * Build a private transfer intent directly through `buildTransferWitness` so claim-link rows
- * can pass `paySeed` (16-byte seed -> ~30-char short claim URLs). `buildPrivateSendIntent` in
- * `@gloamtrade/sdk@0.8.1` does not forward `paySeed`.
+ * Build a signed-ready private transfer intent through `buildPrivateSendIntent`,
+ * passing `paySeed` for claim-link rows so they encode into ~30-char short claim URLs.
  */
 export async function preparePayrollTransfer(args: {
   chainId: number;
@@ -229,50 +226,28 @@ export async function preparePayrollTransfer(args: {
   useShortSeed: boolean;
 }): Promise<PreparedTransfer> {
   const paymentSeed = args.useShortSeed ? randomNoteSeed().seed : undefined;
-  const witness = await buildTransferWitness({
+  const intent = await buildPrivateSendIntent({
     secretHex: args.spendSecret,
-    amountIn: args.spendAmountWei,
-    amountPay: args.payAmountWei,
+    amountInWei: args.spendAmountWei,
+    amountPayWei: args.payAmountWei,
     asset: args.asset,
     path: args.path,
+    prove: args.prove,
+    poolAddress: args.pool,
+    chainId: args.chainId,
     ...(paymentSeed ? { paySeed: paymentSeed } : {}),
   });
-  if (witness.blocker) {
-    throw new Error(witness.blocker);
-  }
 
-  const { proofBytes } = await args.prove(witness.circomInput);
-  const rootBytes = fieldToBytes32(witness.publicInputs.root);
-  const nullifierBytes = fieldToBytes32(witness.publicInputs.nullifier);
-  const c0Bytes = fieldToBytes32(witness.publicInputs.newCommitment0);
-  const c1Bytes = fieldToBytes32(witness.publicInputs.newCommitment1);
-
-  const intent: PreparedTransfer["intent"] = {
-    intent: "private_send",
-    chainId: args.chainId,
-    agentAddress: null,
-    plan: {
-      asset: args.asset.toLowerCase() === NATIVE_ASSET.toLowerCase() ? "ETH" : args.asset,
-      amountWei: args.payAmountWei,
-    },
-    privacy: "Private payroll send inside the shielded pool.",
-    execution: `transfer(proof, root, nullifier, [c0, c1]) on ${networkName(args.chainId)}`,
-    exec: {
-      poolAddress: args.pool,
-      fn: "transfer",
-      valueWei: 0n,
-      args: [proofBytes, rootBytes, nullifierBytes, [c0Bytes, c1Bytes]],
-    },
-  };
+  const [, , nullifier] = transferCallArgs(intent);
 
   return {
     intent,
-    paymentNote: witness.paymentNote,
-    changeNote: witness.changeNote,
+    paymentNote: intent.paymentNote,
+    changeNote: intent.changeNote,
     paymentSeed,
-    nullifier: fieldToHex(witness.publicInputs.nullifier),
-    paymentCommitment: witness.paymentNote.commitment,
-    changeCommitment: witness.changeNote.commitment,
+    nullifier,
+    paymentCommitment: intent.paymentNote.commitment,
+    changeCommitment: intent.changeNote.commitment,
   };
 }
 
@@ -557,7 +532,7 @@ export async function executePayrollRun(opts: ExecutePayrollOptions): Promise<Pa
       asset: asset.address,
       chainId: net.chainId,
       poolAddress: net.pool,
-      prover: proveShield,
+      prove: proveShield,
       client: publicClient,
     });
 
