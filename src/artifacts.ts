@@ -1,5 +1,5 @@
-import { createHash } from "node:crypto";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { createHash, randomBytes } from "node:crypto";
+import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 import {
@@ -71,7 +71,10 @@ async function ensureVerifiedFile(
     );
   }
   mkdirSync(dirname(dest), { recursive: true });
-  writeFileSync(dest, bytes);
+  // Atomic rename prevents a killed download from leaving a half-written cache file.
+  const tmp = `${dest}.tmp.${process.pid}.${randomBytes(4).toString("hex")}`;
+  writeFileSync(tmp, bytes);
+  renameSync(tmp, dest);
   return dest;
 }
 

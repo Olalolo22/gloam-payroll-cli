@@ -1,18 +1,56 @@
 {
   "name": "gloam-payroll-cli",
-  "version": "0.1.0",
-  "private": true,
-  "type": "module",
+  "version": "0.2.0",
   "description": "Headless private CSV payroll runner and gloamroll1 total-proof CLI built on @gloamtrade/sdk.",
+  "license": "MIT",
+  "author": "Olu (Olalolo22)",
+  "homepage": "https://www.gloam.trade/docs/payroll#headless",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Olalolo22/gloam-payroll-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Olalolo22/gloam-payroll-cli/issues"
+  },
+  "keywords": [
+    "gloam",
+    "payroll",
+    "privacy",
+    "zero-knowledge",
+    "groth16",
+    "stablecoins",
+    "solana",
+    "cli"
+  ],
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "bin": {
+    "gloam-payroll": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "SECURITY.md",
+    "CHANGELOG.md",
+    "sample-payroll.csv"
+  ],
   "scripts": {
+    "build": "tsc -p tsconfig.build.json && node -e \"require('node:fs').chmodSync('dist/cli.js', 0o755)\"",
     "cli": "tsx src/cli.ts",
+    "start": "node dist/cli.js",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test test/payroll.test.ts"
+    "test": "tsx --test test/*.test.ts",
+    "check": "pnpm typecheck && pnpm build && pnpm test"
   },
   "dependencies": {
-    "@gloamtrade/sdk": "^0.8.2",
+    "@gloamtrade/sdk": "^0.9.0",
+    "@heliuslabs/spr": "0.9.0-alpha",
+    "@solana/kit": "^8.3.0",
     "snarkjs": "^0.7.5",
-    "viem": "^2.21.0"
+    "viem": "^2.55.2"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
