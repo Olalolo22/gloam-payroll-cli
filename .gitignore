@@ -1,4 +1,5 @@
 node_modules/
+dist/
 runs/
 *.run.json
 *.payouts.csv
