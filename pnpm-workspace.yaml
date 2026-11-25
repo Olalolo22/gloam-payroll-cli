@@ -1,5 +1,5 @@
 minimumReleaseAgeExclude:
-  - '@gloamtrade/sdk@0.9.0'
+  - '@gloamtrade/sdk@0.9.1'
   - '@heliuslabs/spr@0.9.0-alpha'
 allowBuilds:
   esbuild: true

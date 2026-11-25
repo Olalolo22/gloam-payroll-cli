@@ -234,6 +234,7 @@ async function cmdNetworks(values: ParsedCliArgs["values"]): Promise<void> {
       symbol: a.symbol,
       decimals: a.decimals,
       mint: a.mint ?? "native",
+      ...(a.note ? { note: a.note } : {}),
     })),
     privacyNote: SOLANA_PRIVACY_NOTE,
   }));
@@ -294,6 +295,7 @@ async function cmdPlan(positional: string[], values: ParsedCliArgs["values"]): P
             networkLabel: plan.networkLabel,
             assetSymbol: plan.assetSymbol,
             assetDecimals: plan.assetDecimals,
+            ...(plan.assetNote ? { assetNote: plan.assetNote } : {}),
             validCount: plan.validRows.length,
             totalUnits: plan.totalUnits.toString(),
             totalFormatted: plan.totalFormatted,
@@ -314,6 +316,9 @@ async function cmdPlan(positional: string[], values: ParsedCliArgs["values"]): P
       console.log(`Payees:      ${plan.validRows.length} valid Solana private address(es)`);
       console.log(`Run total:   ${plan.totalFormatted} ${plan.assetSymbol}`);
       console.log(`Privacy:     ${plan.privacyNote}`);
+      if (plan.assetNote) {
+        console.log(`Asset note:  ${plan.assetNote}`);
+      }
       const warnings = plan.validRows.filter((r) => r.warning);
       if (warnings.length > 0) {
         console.log("\nNotes:");

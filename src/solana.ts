@@ -83,6 +83,7 @@ export interface SolanaPayrollPlanSummary {
   assetId: string;
   assetSymbol: string;
   assetDecimals: number;
+  assetNote?: string;
   validRows: ParsedSolanaPayrollRow[];
   issues: CsvRowIssue[];
   fatalError: string | null;
@@ -110,6 +111,7 @@ export function planSolanaPayroll(args: {
     assetId: asset.id,
     assetSymbol: asset.symbol,
     assetDecimals: asset.decimals,
+    ...(asset.note ? { assetNote: asset.note } : {}),
     validRows: parsed.rows,
     issues: parsed.issues,
     fatalError: parsed.fatalError,
