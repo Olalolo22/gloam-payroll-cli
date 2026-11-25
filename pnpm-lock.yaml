@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@gloamtrade/sdk':
-        specifier: ^0.9.0
-        version: 0.9.0(@heliuslabs/spr@0.9.0-alpha(@solana/kit@8.6.0(typescript@5.9.3))(typescript@5.9.3))(@solana/kit@8.6.0(typescript@5.9.3))(snarkjs@0.7.6)(typescript@5.9.3)
+        specifier: ^0.9.1
+        version: 0.9.1(@heliuslabs/spr@0.9.0-alpha(@solana/kit@8.6.0(typescript@5.9.3))(typescript@5.9.3))(@solana/kit@8.6.0(typescript@5.9.3))(snarkjs@0.7.6)(typescript@5.9.3)
       '@heliuslabs/spr':
         specifier: 0.9.0-alpha
         version: 0.9.0-alpha(@solana/kit@8.6.0(typescript@5.9.3))(typescript@5.9.3)
@@ -285,8 +285,8 @@ packages:
   '@ethersproject/wordlists@5.8.0':
     resolution: {integrity: sha512-2df9bbXicZws2Sb5S6ET493uJ0Z84Fjr3pC4tu/qlnZERibZCeUVuqdtt+7Tv9xxhUxHoIekIA7avrKUWHrezg==}
 
-  '@gloamtrade/sdk@0.9.0':
-    resolution: {integrity: sha512-gETIJZI4kLNGlNnfWvSm7ODQpC4xdv2zcmFmrzeF+Ec5lw4VSiH4gJCgURZfqrGtk7bNuG4HsMdBTq6hVhL1wA==}
+  '@gloamtrade/sdk@0.9.1':
+    resolution: {integrity: sha512-ndZg3ucH9wdXyIW8LMHqYApIHdbpXX8E+njPR4aXWu8FcQ97B9vnKBfdyBJaZdhJ3+Wm1/6vhu4y65ym9SSmlA==}
     peerDependencies:
       '@heliuslabs/spr': 0.9.0-alpha
       '@solana/kit': ^8.3.0
@@ -1474,7 +1474,7 @@ snapshots:
       '@ethersproject/properties': 5.8.0
       '@ethersproject/strings': 5.8.0
 
-  '@gloamtrade/sdk@0.9.0(@heliuslabs/spr@0.9.0-alpha(@solana/kit@8.6.0(typescript@5.9.3))(typescript@5.9.3))(@solana/kit@8.6.0(typescript@5.9.3))(snarkjs@0.7.6)(typescript@5.9.3)':
+  '@gloamtrade/sdk@0.9.1(@heliuslabs/spr@0.9.0-alpha(@solana/kit@8.6.0(typescript@5.9.3))(typescript@5.9.3))(@solana/kit@8.6.0(typescript@5.9.3))(snarkjs@0.7.6)(typescript@5.9.3)':
     dependencies:
       circomlibjs: 0.1.7
       viem: 2.58.1(typescript@5.9.3)

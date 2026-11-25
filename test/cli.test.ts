@@ -57,13 +57,15 @@ test("compiled dist/cli.js handles --version, networks, plan, status (secret-fre
   assert.equal(nets.exitCode, 0);
   const netsJson = JSON.parse(nets.stdout) as {
     evm: Array<{ key: string }>;
-    solana: Array<{ key: string }>;
+    solana: Array<{ key: string; assets: Array<{ symbol: string; note?: string }> }>;
   };
   const evmKeys = netsJson.evm.map((n) => n.key);
   assert.ok(evmKeys.includes("robinhood-mainnet"));
   assert.ok(evmKeys.includes("base-mainnet"));
   assert.ok(evmKeys.includes("bnb-mainnet"));
-  assert.ok(netsJson.solana.some((s) => s.key === "solana"));
+  const solMainnet = netsJson.solana.find((s) => s.key === "solana");
+  assert.ok(solMainnet);
+  assert.ok(solMainnet.assets.some((a) => a.symbol === "ZEC" && Boolean(a.note)));
 
   const planEvm = runDistCli(["plan", "sample-payroll.csv", "--json"]);
   assert.equal(planEvm.exitCode, 0);
@@ -73,7 +75,7 @@ test("compiled dist/cli.js handles --version, networks, plan, status (secret-fre
 
   const dir = mkdtempSync(join(tmpdir(), "gloam-cli-test-"));
   try {
-    // Solana plan via CLI.
+    // Solana plan via CLI (USDC and ZEC).
     const solCsvPath = join(dir, "solana.csv");
     writeFileSync(
       solCsvPath,
@@ -85,6 +87,19 @@ test("compiled dist/cli.js handles --version, networks, plan, status (secret-fre
     assert.equal(solJson.kind, "solana");
     assert.equal(solJson.assetSymbol, "USDC");
     assert.equal(solJson.validCount, 1);
+
+    const planZec = runDistCli(["plan", solCsvPath, "--network", "solana", "--asset", "ZEC", "--json"]);
+    assert.equal(planZec.exitCode, 0);
+    const zecJson = JSON.parse(planZec.stdout) as {
+      kind: string;
+      assetSymbol: string;
+      assetDecimals: number;
+      assetNote?: string;
+    };
+    assert.equal(zecJson.kind, "solana");
+    assert.equal(zecJson.assetSymbol, "ZEC");
+    assert.equal(zecJson.assetDecimals, 8);
+    assert.ok(zecJson.assetNote && zecJson.assetNote.length > 0);
 
     // Status prints progress safely without leaking note secrets.
     const net = resolveNetwork("base-mainnet");

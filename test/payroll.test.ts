@@ -663,6 +663,16 @@ test("Solana payroll CSV parsing, planning, crash-safe reconciliation, and ledge
   assert.equal(plan.assetSymbol, "USDC");
   assert.match(plan.privacyNote, /Helius/);
 
+  const zecPlan = planSolanaPayroll({
+    csvText: `name,address,amount\nAda,${solAddr1},0.25\n`,
+    networkKey: "solana",
+    assetInput: "ZEC",
+  });
+  assert.equal(zecPlan.assetSymbol, "ZEC");
+  assert.equal(zecPlan.assetDecimals, 8);
+  assert.equal(zecPlan.totalUnits, 25_000_000n);
+  assert.ok(zecPlan.assetNote && zecPlan.assetNote.length > 0);
+
   const state = createInitialSolanaRunState({
     id: "sol-run-1",
     network: "mainnet",

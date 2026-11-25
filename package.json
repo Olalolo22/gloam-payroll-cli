@@ -1,6 +1,6 @@
 {
   "name": "gloam-payroll-cli",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Headless private CSV payroll runner and gloamroll1 total-proof CLI built on @gloamtrade/sdk.",
   "license": "MIT",
   "author": "Olu (Olalolo22)",
@@ -46,7 +46,7 @@
     "check": "pnpm typecheck && pnpm build && pnpm test"
   },
   "dependencies": {
-    "@gloamtrade/sdk": "^0.9.0",
+    "@gloamtrade/sdk": "^0.9.1",
     "@heliuslabs/spr": "0.9.0-alpha",
     "@solana/kit": "^8.3.0",
     "snarkjs": "^0.7.5",

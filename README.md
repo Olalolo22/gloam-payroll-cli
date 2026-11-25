@@ -98,7 +98,7 @@ Run `pnpm cli networks` (or `--json`) for live addresses and limits straight fro
 | Ethereum | `ethereum-mainnet` | `ShieldPoolPayments`, memo board live, `gloamroll1:` proofs |
 | Elysium | `elysium-mainnet` | `ShieldPoolPayments`, memo board live, `gloamroll1:` proofs |
 | BNB Chain | `bnb-mainnet` | `ShieldPoolPayments`, memo board live; pass an archive `--rpc` / `GLOAM_RPC` (public BNB RPCs prune logs) |
-| Solana | `solana` / `solana-mainnet` | Helius Privacy Rings via `@gloamtrade/sdk/solana` (no `gloamroll1:` proofs) |
+| Solana | `solana` / `solana-mainnet` | Helius Privacy Rings via `@gloamtrade/sdk/solana` (`SOL`, `USDC`, `USDT`, `ZEC`; no `gloamroll1:` proofs) |
 | Testnets | `robinhood`, `tempo`, `base`, `ethereum`, `solana-devnet` | For testing before mainnet runs |
 
 ---

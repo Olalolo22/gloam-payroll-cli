@@ -2,6 +2,11 @@
 
 All notable changes to `gloam-payroll-cli` are documented here.
 
+## 0.2.1 (25 November 2026)
+
+- **Upgraded `@gloamtrade/sdk` to `0.9.1`**: Adds **ZEC** (Zcash bridged to Solana by NEAR's Omni Bridge, 8 decimals) on Solana mainnet across `networks`, `plan`, `run`, and `resume`.
+- **Asset notices in `plan` and `networks`**: Displays `asset.note` (such as what stays public when bridging/adding ZEC on Solana) in both text and `--json` output.
+
 ## 0.2.0 (23 November 2026)
 
 ### Safety & Crash-Recovery Fixes
